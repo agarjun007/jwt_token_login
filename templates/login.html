@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Login</title>
+</head>
+<body>
+    
+<div class="row" >
+    <div class="container col-lg-2 md-9 sm-10 mt-5">
+        <form id="login" >
+            {%csrf_token%}
+            {{login_form}}
+            <a style="float: right;" href="/signup/">Signup</a><br>
+            <button id="login_btn" type="button" style="float: left;"  class="btn btn-sm btn-success mt-1">Submit</button> <br>
+            <a style="float: right;" href="/reset-password/">Forgot password</a><br>
+            <span id="msg" style="color: red;"></span>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script>
+     $('#login_btn').click(function() {
+        // formData = $('#login').serializeArray();
+        // formData = JSON.stringify(formData);
+        username = $('#id_username').val()
+        password = $('#id_password').val()
+        
+         var userData ={
+            "csrfmiddlewaretoken" : '{{csrf_token}}',
+            "username" : username,
+            "password" : password
+        }
+
+        console.log('userDataaaa',userData);
+
+        if (username === ''){
+            $('#msg').html('Enter username')
+        }
+        else if (password === ''){
+            $('#msg').html('Enter password')
+        }
+else{
+    $.ajax({
+        url:'/',
+        method:'POST',
+        data: userData,
+        dataType :'JSON',
+        success: function( data ){
+            console.log('return dataaaa',data)
+            if(data.status == 'success'){
+                window.location.replace('/home/')
+                
+            }
+            else if(data.status == 'fail'){
+                $('#msg').html('invalid credentials')
+                $('#id_username').val('')
+                $('#id_password').val('')
+            }
+        }
+
+    })
+}
+});
+</script>
+</body>
+</html>
+
+            <!-- <label for="email">Email</label>
+            <input type="email" name="email" id="">     
+            <label for="username">username</label>
+            <input type="text" name="username" id="">
+            <label for="password">password</label>
+            <input type="password" name="password" id="">            
+            <label for="mobile">mobile</label>
+            <input type="number" name="mobile" id=""> -->
